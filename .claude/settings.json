@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -m 5 -o /dev/null -w \"root: %{http_code}\\\\n\" http://localhost:5000/)",
+      "Bash(curl -s -m 5 -i -X OPTIONS http://localhost:5000/mec-api/auth/login -H \"Origin: http://localhost:5174\" -H \"Access-Control-Request-Method: POST\")",
+      "Bash(curl -s -m 5 -i -X OPTIONS http://localhost:5000/mec-api/auth/login -H \"Origin: http://localhost:5173\" -H \"Access-Control-Request-Method: POST\")",
+      "Bash(powershell -NoProfile -Command \"\\(Get-Process -Id 23676\\).StartTime\")",
+      "Bash(curl -s -m 10 -X POST http://localhost:5000/mec-api/auth/login -H \"Origin: http://localhost:5174\" -H \"Content-Type: application/json\" -d '{\"email\":\"nobody@example.com\",\"password\":\"x\"}' -w \"\\\\nstatus: %{http_code}\\\\n\")",
+      "Bash(node -e ' *)",
+      "PowerShell(npm run seed:superadmin)"
+    ]
+  }
+}
