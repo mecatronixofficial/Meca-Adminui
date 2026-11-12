@@ -1,47 +1,23 @@
-// ✅ Core React Imports
-import React from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-
-// ✅ React Router
 import { RouterProvider } from "react-router-dom";
-import Router from "./router/Router";
 
-// ✅ Redux
-import { Provider } from "react-redux";
-import store from "./redux/store";
+// Brand fonts (self-hosted, same faces as Meca-UI)
+import "@fontsource-variable/inter";
+import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/jetbrains-mono";
 
-// ✅ Toast Notifications
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-// ✅ Global Styles
 import "./index.css";
+import { FeedbackProvider } from "./components/ui/Feedback";
+import router from "./router/Router";
 
-// ✅ Create React Root
 const container = document.getElementById("root");
-if (!container) {
-  throw new Error(
-    "❌ Root element not found. Make sure you have <div id='root'></div> in index.html"
-  );
-}
+if (!container) throw new Error("Root element #root not found in index.html");
 
-const root = createRoot(container);
-
-// ✅ Render App
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={Router} />
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        newestOnTop
-        limit={4}
-        closeOnClick
-        pauseOnFocusLoss
-        theme="dark"
-        aria-label="Application notifications"
-      />
-    </Provider>
-  </React.StrictMode>
+createRoot(container).render(
+  <StrictMode>
+    <FeedbackProvider>
+      <RouterProvider router={router} />
+    </FeedbackProvider>
+  </StrictMode>,
 );

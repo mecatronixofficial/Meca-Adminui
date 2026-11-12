@@ -1,12 +1,185 @@
 @import "tailwindcss";
 
-/* ✅ Hide scrollbar for Chrome, Safari, and Edge */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* ==========================================================================
+ * Mecatronix design tokens (ported from Meca-UI src/app/globals.css)
+ * Exposed to Tailwind through @theme, so `bg-ink`, `text-muted-ink`,
+ * `font-display`, `rounded-card`, `shadow-lift` etc. all come from here.
+ * Fonts are self-hosted via @fontsource-variable (imported in main.tsx).
+ * ======================================================================= */
+
+@theme {
+  /* Neutrals */
+  --color-ink: #0b0d12;          /* near-black: headings, primary text */
+  --color-surface: #171b24;      /* body text, dark chips */
+  --color-paper: #f7f7f8;        /* neutral fill for cards and inputs on white */
+  --color-sand: #fff5f4;         /* blush tint for highlighted panels */
+  --color-line: #ececef;         /* soft border on white */
+  --color-line-strong: #dcdce1;
+
+  /* Text */
+  --color-muted: #6b7080;        /* tertiary text on white (4.9:1) */
+  --color-muted-ink: #555a66;    /* secondary text on white (6.9:1) */
+
+  /* Accent: the red of the Mecatronix mark */
+  --color-accent: #e10600;       /* brand red: fills, rules, icons, large text */
+  --color-accent-strong: #c40500;/* buttons with white text (6.2:1) */
+  --color-accent-ink: #a30400;   /* small accent text on white (8.1:1) */
+  --color-accent-soft: #fff0ef;  /* red-tinted fill behind accent icons */
+  --color-wine: #6e0a0f;         /* deep end of the red gradient */
+  --color-accent-glow: #ff5247;  /* accent text on ink (6.1:1) */
+
+  /* Status */
+  --color-danger: #b42318;
+  --color-danger-soft: #fef3f2;
+  --color-warning: #b54708;
+  --color-warning-soft: #fffaeb;
+  --color-success: #067647;
+  --color-success-soft: #ecfdf3;
+
+  /* Type */
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk Variable", "Inter Variable", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, monospace;
+
+  /* Radius */
+  --radius-card: 1.25rem;
+  --radius-panel: 1.75rem;
+
+  /* Elevation */
+  --shadow-soft: 0 1px 2px rgb(11 13 18 / 0.04), 0 4px 16px rgb(11 13 18 / 0.05);
+  --shadow-lift: 0 2px 4px rgb(11 13 18 / 0.04), 0 18px 48px -12px rgb(11 13 18 / 0.18);
+  --shadow-window: 0 40px 100px -30px rgb(11 13 18 / 0.28), 0 0 0 1px rgb(11 13 18 / 0.06);
+  --shadow-glow: 0 8px 30px -8px rgb(225 6 0 / 0.5);
+  --shadow-glow-lg: 0 12px 38px -8px rgb(225 6 0 / 0.62);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-rise: rise 0.5s var(--ease-out-expo) both;
+  --animate-fade: fade 0.3s ease-out both;
+  --animate-spin-slow: spin 24s linear infinite;
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 }
 
-/* ✅ Hide scrollbar for Firefox */
-.no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;      /* Firefox */
+/* ---------- Base ---------- */
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-paper font-sans text-surface antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: rgb(225 6 0 / 0.16);
+  }
+
+  /* Native form controls inherit the type system */
+  input, textarea, select, button { font: inherit; }
+
+  button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+}
+
+/* ---------- Utilities ---------- */
+
+@utility text-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Fine engineering grid used behind heroes and feature panels */
+@utility bg-grid-light {
+  background-image:
+    linear-gradient(to right, rgb(11 13 18 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(11 13 18 / 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* The same grid in white, for dark panels */
+@utility bg-grid-inverse {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Soft light sources: radial gradients instead of filter: blur() */
+@utility glow-accent {
+  background: radial-gradient(closest-side, rgb(225 6 0 / 0.22), rgb(225 6 0 / 0.07) 55%, transparent);
+}
+
+@utility glow-wine {
+  background: radial-gradient(closest-side, rgb(255 92 70 / 0.16), rgb(255 92 70 / 0.05) 55%, transparent);
+}
+
+/* Brand gradient text with light travelling through it, for dark backgrounds */
+@utility text-shimmer-light {
+  background-image: linear-gradient(100deg, #ff5247 0%, #ffb3a8 18%, #ff2a1f 32%, #ff5247 50%, #ffb3a8 68%, #ff2a1f 82%, #ff5247 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 9s linear infinite;
+}
+
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+/* A light sweep across solid buttons (mouse only) */
+@utility btn-shine {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.32) 50%, transparent 70%);
+    transform: translateX(-120%);
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    &:hover:not(:disabled)::after {
+      transform: translateX(120%);
+      transition: transform 0.9s var(--ease-out-expo);
+    }
+  }
+}
+
+/* Thin, quiet scrollbars for panels that scroll on their own */
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
