@@ -7,8 +7,8 @@ import type { UploadFolder } from "../lib/types";
  * Every endpoint answers `{ success, message, data? }`; failures throw ApiError.
  */
 
-const BASE_URL = String(import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
-export const CLIENT_URL: string | undefined = import.meta.env.VITE_API_CUSTOMER_BASE_URL || undefined;
+const BASE_URL = (String(import.meta.env.VITE_API_BASE_URL ?? "").trim() || "/mec-api").replace(/\/+$/, "");
+export const CLIENT_URL: string | undefined = String(import.meta.env.VITE_API_CUSTOMER_BASE_URL ?? "").trim() || (import.meta.env.DEV ? "http://localhost:3000" : undefined);
 
 export type Query = Record<string, string | number | boolean | null | undefined>;
 

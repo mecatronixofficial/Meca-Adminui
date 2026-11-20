@@ -1,4 +1,6 @@
 import { Mail, UsersRound } from "lucide-react";
+import { CLIENT_URL } from "../../api/api";
+import { buttonClass } from "../../components/ui/button-class";
 import { ResourcePage, type ResourceConfig } from "../../components/ui/ResourcePage";
 import { Badge, Stack, Thumb } from "../../components/ui/ui";
 import type { Values } from "../../components/ui/fields";
@@ -7,15 +9,16 @@ import type { TeamMember } from "../../lib/types";
 const config: ResourceConfig<TeamMember> = {
   title: "Team & founders",
   noun: "team member",
-  description: "People shown in “Meet our founders” on the website's About page, in position order.",
-  listPath: "team/get",
+  description: "Manage the people shown on the About page. Hidden people stay in this list so you can publish them later.",
+  listPath: "team/all",
   createPath: "team/add",
   updatePath: (row) => `team/edit/${row.id}`,
   deletePath: (row) => `team/delete/${row.id}`,
   label: (row) => row.name,
   createLabel: "Add person",
+  headerActions: CLIENT_URL ? <a href={CLIENT_URL.replace(/\/+$/, "") + "/about#team"} target="_blank" rel="noreferrer" className={buttonClass("secondary")}>View on website</a> : undefined,
   emptyIcon: <UsersRound aria-hidden />,
-  emptyHint: "Add your founder and co-founder to show them on the About page.",
+  emptyHint: "Add a person with a photo and turn on “Show on website” to publish them on the About page.",
   defaults: { position: "1" },
   fields: [
     { name: "name", label: "Full name", type: "text", required: true, maxLength: 100, placeholder: "e.g. Arun Kumar" },
@@ -25,7 +28,7 @@ const config: ResourceConfig<TeamMember> = {
     { name: "linkedin", label: "LinkedIn", type: "url", maxLength: 300, placeholder: "https://www.linkedin.com/in/…", hint: "Optional." },
     { name: "email", label: "Email", type: "email", maxLength: 150, hint: "Optional. Shown publicly on the About page." },
     { name: "position", label: "Position", type: "number", min: 1, required: true, hint: "1 shows first (e.g. Founder 1, Co-founder 2)." },
-    { name: "is_active", label: "Show on website", type: "switch", description: "Turn off to hide this person without deleting them." },
+    { name: "is_active", label: "Show on website", type: "switch", description: "Turn on to publish on the About page. Turn off to hide without deleting." },
   ],
   formExtra: (values) => <MemberPreview values={values} />,
   columns: [
@@ -77,7 +80,7 @@ function MemberPreview({ values }: { values: Values }) {
   return (
     <div className="mt-6 border-t border-line pt-5">
       <p className="text-sm font-medium text-ink">Preview</p>
-      <p className="mt-0.5 text-xs text-muted">How this person appears in “Meet our founders” on the About page.</p>
+      <p className="mt-0.5 text-xs text-muted">How this person appears in “Team & founders” on the About page.</p>
       <div className="mt-3 grid overflow-hidden rounded-2xl border border-line bg-white sm:grid-cols-[170px_1fr]">
         <div className="relative aspect-[4/5] bg-paper sm:aspect-auto sm:min-h-[220px]">
           {photo ? (

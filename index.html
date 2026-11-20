@@ -1,14 +1,53 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0b0d12" />
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Mecatronix Admin</title>
+    <meta name="description" content="Secure admin console for the Mecatronix website: enquiries, invoices, quotations, projects and website content." />
+    <meta name="application-name" content="Mecatronix Admin" />
+    <meta name="author" content="Mecatronix Software Development" />
+
+    <!-- Private console: never index, follow, cache in search results or translate-proxy. -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+    <meta name="googlebot" content="noindex, nofollow" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Theme -->
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#0b0d12" />
+
+    <!-- Icons and install -->
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="Meca Admin" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Link previews (chat apps, email). %SITE_URL% is set from VITE_ADMIN_URL at build time. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mecatronix" />
+    <meta property="og:title" content="Mecatronix Admin" />
+    <meta property="og:description" content="Secure admin console for the Mecatronix website." />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Mecatronix Admin Console" />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mecatronix Admin" />
+    <meta name="twitter:description" content="Secure admin console for the Mecatronix website." />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
   </head>
   <body>
+    <noscript>
+      <p style="font: 16px/1.5 system-ui, sans-serif; padding: 2rem; text-align: center">
+        Mecatronix Admin needs JavaScript. Please enable it in your browser settings and reload the page.
+      </p>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

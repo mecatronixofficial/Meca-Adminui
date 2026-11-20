@@ -1,0 +1,3 @@
+# Private admin console: keep every path out of search engines.
+User-agent: *
+Disallow: /

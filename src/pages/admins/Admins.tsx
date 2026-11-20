@@ -2,7 +2,8 @@ import { ShieldCheck } from "lucide-react";
 import { useSession } from "../../components/layout/session";
 import type { FieldDef } from "../../components/ui/fields";
 import { ResourcePage, type ResourceConfig } from "../../components/ui/ResourcePage";
-import { Avatar, Badge, Card, EmptyState, PageHeader, Stack } from "../../components/ui/ui";
+import { Avatar, Badge, Stack } from "../../components/ui/ui";
+import ErrorPage from "../../components/feedback/ErrorPage";
 import { formatDate } from "../../lib/format";
 import type { Admin } from "../../lib/types";
 
@@ -71,14 +72,7 @@ const config: ResourceConfig<Admin> = {
 export default function Admins() {
   const { user } = useSession();
   if (user.role !== "superadmin") {
-    return (
-      <>
-        <PageHeader title="Admins" />
-        <Card>
-          <EmptyState icon={<ShieldCheck aria-hidden />} title="Superadmins only" description="Ask a superadmin if you need an account added or changed." />
-        </Card>
-      </>
-    );
+    return <ErrorPage statusCode={403} inline message="Managing admins is limited to superadmins. Ask a superadmin if you need an account added or changed." />;
   }
   return <ResourcePage config={config} />;
 }

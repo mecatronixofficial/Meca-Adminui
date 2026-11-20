@@ -1,7 +1,7 @@
-﻿import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { motion, MotionConfig } from "motion/react";
 import { ArrowUpRight, FolderKanban, Inbox, Newspaper, ReceiptText, ShieldCheck } from "lucide-react";
-import logo from "../../assets/logos/mecatronix-logo.png";
+import logo from "../../assets/logos/mecatronix-logo.webp";
 import { CLIENT_URL } from "../../api/api";
 import { cn } from "../../lib/cn";
 
@@ -28,7 +28,7 @@ function StudioClock() {
   }, []);
   return (
     <span>
-      Coimbatore Â· <time className="tabular-nums text-white/75">{time}</time> IST
+      Coimbatore · <time className="tabular-nums text-white/75">{time}</time> IST
     </span>
   );
 }
@@ -36,7 +36,7 @@ function StudioClock() {
 function Wordmark({ tone = "light" }: { tone?: "light" | "dark" }) {
   return (
     <span className="inline-flex items-center gap-2.5">
-      <img src={logo} alt="" width={292} height={352} className="h-9 w-auto" />
+      <img src={logo} alt="" width={117} height={144} decoding="async" className="h-9 w-auto" />
       <span className="flex flex-col leading-none">
         <span className={cn("font-display text-lg font-semibold tracking-[0.08em]", tone === "dark" ? "text-white" : "text-ink")}>
           MECATRONIX
@@ -139,7 +139,7 @@ function BrandPanel() {
 export default function AuthShell({ title, children }: { title: string; children: ReactNode }) {
   useEffect(() => {
     const previous = document.title;
-    document.title = `${title} Â· Mecatronix Admin`;
+    document.title = `${title} · Mecatronix Admin`;
     return () => {
       document.title = previous;
     };
@@ -181,7 +181,7 @@ export default function AuthShell({ title, children }: { title: string; children
           </main>
 
           <footer className="flex flex-col items-center justify-between gap-2 text-xs text-muted sm:flex-row">
-            <span>Â© {new Date().getFullYear()} Mecatronix Software Development</span>
+            <span>© {new Date().getFullYear()} Mecatronix Software Development</span>
             <span className="inline-flex items-center gap-1.5">
               <ShieldCheck aria-hidden className="size-3.5 text-success" />
               Authorised personnel only

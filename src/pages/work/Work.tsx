@@ -1,4 +1,7 @@
 import { Wrench } from "lucide-react";
+import { Link } from "react-router-dom";
+import { buttonClass } from "../../components/ui/button-class";
+import { slugify } from "../../lib/portfolio";
 import { useApiData } from "../../api/api";
 import { ResourcePage, type ResourceConfig } from "../../components/ui/ResourcePage";
 import { Badge, Stack, Thumb } from "../../components/ui/ui";
@@ -12,6 +15,8 @@ export default function Work() {
     title: "Works",
     noun: "work",
     description: "Case studies made of sections, optionally linked to a project.",
+    headerActions: <Link to="/mec-admin/project-media" className={buttonClass("secondary")}>Work details & media</Link>,
+    rowActions: (row) => <Link to={"/mec-admin/project-media?slug=" + encodeURIComponent(slugify(row.project?.project_name || projects.data?.find((project) => project.work_id === row.id)?.project_name || row.title))} className={buttonClass("secondary", "sm")}>Details & media</Link>,
     listPath: "work/get",
     createPath: "work/add",
     updatePath: (row) => `work/edit/${row.id}`,

@@ -1,4 +1,4 @@
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, type TooltipContentProps } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 /** Daily sign-ups as columns: one series, so no legend; the card title names it. */
 
@@ -6,7 +6,8 @@ export type DayCount = { day: string; label: string; count: number };
 
 const ACCENT = "#e10600"; // validated: contrast ≥3:1 on white, inside the lightness band
 
-function ChartTooltip({ active, payload }: TooltipContentProps<number, string>) {
+/** Only reads what it renders, so it accepts Recharts' full tooltip props without narrowing their generics. */
+function ChartTooltip({ active, payload }: { active?: boolean; payload?: ReadonlyArray<{ payload?: unknown }> }) {
   const point = payload?.[0]?.payload as DayCount | undefined;
   if (!active || !point) return null;
   return (

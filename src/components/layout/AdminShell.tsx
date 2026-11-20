@@ -1,5 +1,7 @@
 import {
   UsersRound,
+  Bot,
+  Images,
   ArrowUpRight,
   BadgePercent,
   Contact,
@@ -24,8 +26,9 @@ import {
 } from "lucide-react";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { api, CLIENT_URL, UNAUTHORIZED_EVENT } from "../../api/api";
-import logo from "../../assets/logos/mecatronix-logo.png";
+import { api, ApiError, CLIENT_URL, UNAUTHORIZED_EVENT } from "../../api/api";
+import ErrorPage from "../feedback/ErrorPage";
+import logo from "../../assets/logos/mecatronix-logo.webp";
 import { cn } from "../../lib/cn";
 import type { Admin, DashboardStats } from "../../lib/types";
 import { useFeedback } from "../ui/feedback-context";
@@ -62,6 +65,8 @@ const NAV: { heading: string; items: NavItem[] }[] = [
       { to: `${ROOT}/blogs`, label: "Blogs", icon: FileText },
       { to: `${ROOT}/work`, label: "Works", icon: Wrench },
       { to: `${ROOT}/project`, label: "Projects", icon: FolderKanban },
+      { to: `${ROOT}/project-media`, label: "Work details & media", icon: Images },
+      { to: `${ROOT}/meca-board`, label: "MECA robot board", icon: Bot },
       { to: `${ROOT}/clients`, label: "Clients", icon: Handshake },
       { to: `${ROOT}/team`, label: "Team & founders", icon: UsersRound },
       { to: `${ROOT}/contact`, label: "Contact details", icon: Contact },
@@ -87,7 +92,7 @@ const NAV: { heading: string; items: NavItem[] }[] = [
 function Wordmark({ compact }: { compact?: boolean }) {
   return (
     <Link to={ROOT} className="flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-accent">
-      <img src={logo} alt="" width={292} height={352} className={compact ? "h-7 w-auto" : "h-8 w-auto"} />
+      <img src={logo} alt="" width={117} height={144} decoding="async" className={compact ? "h-7 w-auto" : "h-8 w-auto"} />
       <span className="flex flex-col leading-none">
         <span className="font-display text-[15px] font-semibold tracking-[0.08em] text-ink">MECATRONIX</span>
         <span className="mt-1 font-mono text-[9px] tracking-[0.28em] text-accent-ink">ADMIN</span>
@@ -104,6 +109,8 @@ export default function AdminShell() {
   const [counts, setCounts] = useState<Counts | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openedFor, setOpenedFor] = useState(location.pathname);
+  /** HTTP status of a failed session check that wasn't a sign-in problem (0 = unreachable). */
+  const [sessionError, setSessionError] = useState<number | null>(null);
 
   // Close the mobile menu after navigating
   if (openedFor !== location.pathname) {
@@ -117,7 +124,21 @@ export default function AdminShell() {
   }, [navigate]);
 
   useEffect(() => {
-    api<Admin>("auth/check_login").then(({ data }) => setUser(data), toLogin);
+    if (user) return;
+    const controller = new AbortController();
+    api<Admin>("auth/check_login", { signal: controller.signal }).then(
+      ({ data }) => setUser(data),
+      (error: unknown) => {
+        if ((error as Error)?.name === "AbortError") return;
+        // Only a rejected session means "sign in"; a network or server failure gets a retry screen instead.
+        if (error instanceof ApiError && (error.status === 401 || error.status === 403)) toLogin();
+        else setSessionError(error instanceof ApiError ? error.status : 500);
+      },
+    );
+    return () => controller.abort();
+  }, [user, toLogin]);
+
+  useEffect(() => {
     const expired = () => {
       toast.error("Your session expired. Please sign in again.");
       toLogin();
@@ -146,6 +167,7 @@ export default function AdminShell() {
     navigate("/", { replace: true });
   };
 
+  if (sessionError !== null && !user) return <ErrorPage statusCode={sessionError} />;
   if (!session || !user) return <Spinner label="Checking your session" className="min-h-dvh bg-paper" />;
 
   const sidebar = (
@@ -234,6 +256,12 @@ export default function AdminShell() {
   return (
     <SessionContext.Provider value={session}>
       <div className="min-h-dvh bg-paper print:bg-white">
+        <a
+          href="#main"
+          className="sr-only z-60 rounded-lg bg-ink px-4 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
+          Skip to content
+        </a>
         <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line bg-white lg:block print:hidden">{sidebar}</aside>
 
         <div className="sticky top-0 z-30 flex items-center justify-between border-b border-line bg-white/90 px-4 py-3 backdrop-blur lg:hidden print:hidden">
