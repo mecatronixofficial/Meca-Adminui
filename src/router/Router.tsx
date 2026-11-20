@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { lazy, Suspense, type ReactNode } from "react";
-import { createBrowserRouter, Navigate, useParams } from "react-router-dom";
+import { createBrowserRouter, Navigate, useParams, type RouteObject } from "react-router-dom";
 import ErrorPage from "../components/feedback/ErrorPage";
 import { Spinner } from "../components/ui/ui";
 
@@ -18,6 +18,8 @@ const Team = lazy(() => import("../pages/team/Team"));
 const Blogs = lazy(() => import("../pages/blogs/Blogs"));
 const Work = lazy(() => import("../pages/work/Work"));
 const Projects = lazy(() => import("../pages/projects/Projects"));
+const ProjectMedia = lazy(() => import("../pages/project-media/ProjectMedia"));
+const MecaBoard = lazy(() => import("../pages/meca-board/MecaBoard"));
 const Clients = lazy(() => import("../pages/clients/Clients"));
 const ContactSettings = lazy(() => import("../pages/contact/ContactSettings"));
 const Invoice = lazy(() => import("../pages/invoice/Invoice"));
@@ -38,6 +40,33 @@ function EnquiryRedirect() {
   return <Navigate to={`/mec-admin/enquiries?open=${encodeURIComponent(id)}`} replace />;
 }
 
+/** Pages rendered in the admin shell's <Outlet /> (AdminShell wraps them in its own Suspense). */
+const adminPages: RouteObject[] = [
+  { index: true, element: <Dash /> },
+  { path: "enquiries", element: <Enquiries /> },
+  { path: "enquiries/:id", element: <EnquiryRedirect /> },
+  { path: "previews", element: <Previews /> },
+  { path: "reviews", element: <Reviews /> },
+  { path: "subscribers", element: <Subscribers /> },
+  { path: "banners", element: <Banners /> },
+  { path: "team", element: <Team /> },
+  { path: "blogs", element: <Blogs /> },
+  { path: "work", element: <Work /> },
+  { path: "project", element: <Projects /> },
+  { path: "project-media", element: <ProjectMedia /> },
+  { path: "meca-board", element: <MecaBoard /> },
+  { path: "clients", element: <Clients /> },
+  { path: "contact", element: <ContactSettings /> },
+  { path: "invoice", element: <Invoice /> },
+  { path: "invoice/:id", element: <InvoiceView /> },
+  { path: "quotation", element: <Quotation /> },
+  { path: "voucher", element: <Voucher /> },
+  { path: "admin", element: <Admins /> },
+  { path: "account", element: <Account /> },
+  // Unknown admin URLs keep the sidebar so the admin can navigate away.
+  { path: "*", element: <ErrorPage statusCode={404} inline /> },
+];
+
 const router = createBrowserRouter([
   { path: "/", element: deferred(<Auth />), errorElement: <ErrorPage /> },
   // Server emails link to `${ADMIN_URL}/login`; keep one canonical sign-in URL.
@@ -46,30 +75,16 @@ const router = createBrowserRouter([
   { path: "/reset-password/:token", element: deferred(<ResetPassword />), errorElement: <ErrorPage /> },
   {
     path: "/mec-admin",
-    // AdminShell checks the session and renders pages (lazy, inside its own Suspense) in <Outlet />
+    // AdminShell checks the session and renders pages (lazy, inside its own Suspense) in <Outlet />.
+    // Its own errorElement covers failures of the shell itself, such as a stale chunk after a deploy.
     element: deferred(<AdminShell />),
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Dash /> },
-      { path: "enquiries", element: <Enquiries /> },
-      { path: "enquiries/:id", element: <EnquiryRedirect /> },
-      { path: "previews", element: <Previews /> },
-      { path: "reviews", element: <Reviews /> },
-      { path: "subscribers", element: <Subscribers /> },
-      { path: "banners", element: <Banners /> },
-      { path: "team", element: <Team /> },
-      { path: "blogs", element: <Blogs /> },
-      { path: "work", element: <Work /> },
-      { path: "project", element: <Projects /> },
-      { path: "clients", element: <Clients /> },
-      { path: "contact", element: <ContactSettings /> },
-      { path: "invoice", element: <Invoice /> },
-      { path: "invoice/:id", element: <InvoiceView /> },
-      { path: "quotation", element: <Quotation /> },
-      { path: "voucher", element: <Voucher /> },
-      { path: "admin", element: <Admins /> },
-      { path: "account", element: <Account /> },
-      { path: "*", element: <ErrorPage statusCode={404} /> },
+      {
+        // Errors thrown by a page render inside the shell, so the sidebar stays usable.
+        errorElement: <ErrorPage inline />,
+        children: adminPages,
+      },
     ],
   },
   { path: "*", element: <ErrorPage statusCode={404} /> },

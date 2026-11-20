@@ -1,0 +1,19 @@
+{
+  "name": "Mecatronix Admin",
+  "short_name": "Meca Admin",
+  "description": "Admin console for the Mecatronix website: enquiries, billing, projects and website content.",
+  "id": "/mec-admin",
+  "start_url": "/mec-admin",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f7f8",
+  "theme_color": "#0b0d12",
+  "lang": "en",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

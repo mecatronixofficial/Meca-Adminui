@@ -1,4 +1,7 @@
 import { ExternalLink, FolderKanban } from "lucide-react";
+import { Link } from "react-router-dom";
+import { buttonClass } from "../../components/ui/button-class";
+import { slugify } from "../../lib/portfolio";
 import { useApiData } from "../../api/api";
 import { ResourcePage, type ResourceConfig } from "../../components/ui/ResourcePage";
 import { Badge, Stack, Thumb } from "../../components/ui/ui";
@@ -14,6 +17,8 @@ export default function Projects() {
     title: "Projects",
     noun: "project",
     description: "Portfolio projects. Each belongs to a client and a work (case study).",
+    headerActions: <Link to="/mec-admin/project-media" className={buttonClass("secondary")}>Work details & media</Link>,
+    rowActions: (row) => <Link to={"/mec-admin/project-media?slug=" + encodeURIComponent(slugify(row.project_name))} className={buttonClass("secondary", "sm")}>Details & media</Link>,
     listPath: "project/all",
     createPath: "project/add",
     updatePath: (row) => `project/edit/${row.id}`,

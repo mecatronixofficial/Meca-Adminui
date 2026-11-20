@@ -246,7 +246,7 @@ export function ResourcePage<T extends { id: string }>({ config, refreshKey = 0 
                     </th>
                   ))}
                   {hasActions && (
-                    <th scope="col" className="px-4 py-2.5 text-right font-medium">
+                    <th scope="col" className="relative px-4 py-2.5 text-right font-medium">
                       <span className="sr-only">Actions</span>
                     </th>
                   )}
