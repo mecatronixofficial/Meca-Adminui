@@ -1,6 +1,7 @@
 import {
   UsersRound,
   Bot,
+  Cpu,
   Images,
   ArrowUpRight,
   BadgePercent,
@@ -67,6 +68,7 @@ const NAV: { heading: string; items: NavItem[] }[] = [
       { to: `${ROOT}/project`, label: "Projects", icon: FolderKanban },
       { to: `${ROOT}/project-media`, label: "Work details & media", icon: Images },
       { to: `${ROOT}/meca-board`, label: "MECA robot board", icon: Bot },
+      { to: `${ROOT}/tech`, label: "Technology", icon: Cpu },
       { to: `${ROOT}/clients`, label: "Clients", icon: Handshake },
       { to: `${ROOT}/team`, label: "Team & founders", icon: UsersRound },
       { to: `${ROOT}/contact`, label: "Contact details", icon: Contact },

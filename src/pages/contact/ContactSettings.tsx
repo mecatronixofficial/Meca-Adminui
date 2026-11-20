@@ -1,4 +1,4 @@
-import { ArrowUpRight, Clock, Globe, Mail, MapPin, MessageCircle, Phone, RotateCcw, Save } from "lucide-react";
+import { ArrowUpRight, Clock, Globe, Mail, MapPin, MessageCircle, Phone, RotateCcw, Save, Star } from "lucide-react";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { api, CLIENT_URL, useApiData } from "../../api/api";
 import { buttonClass } from "../../components/ui/button-class";
@@ -82,6 +82,8 @@ const sections: { key: string; title: string; description: string; icon: ReactNo
         { name: "pincode", label: "PIN code", type: "text", maxLength: 12 },
         { name: "country", label: "Country", type: "text", required: true, maxLength: 60 },
         { name: "map_url", label: "Google Maps link", type: "url", wide: true, placeholder: "https://maps.app.goo.gl/…", hint: "Optional. Used for “Open in Maps”." },
+        { name: "lat", label: "Latitude", type: "number", min: -90, max: 90, step: 0.0000001, hint: "Optional, e.g. 11.0198784. Places the map pin." },
+        { name: "lng", label: "Longitude", type: "number", min: -180, max: 180, step: 0.0000001, hint: "Optional, e.g. 76.9785856. Give both or neither." },
       ],
     },
   },
@@ -120,11 +122,32 @@ const hoursFields: FieldDef[] = [
   { name: "close", label: "Closes", type: "time", required: true },
 ];
 
-const allFields = [...sections.map((s) => s.field), ...hoursFields];
+const googleFields: FieldDef[] = [
+  {
+    name: "review_url",
+    label: "Google review link",
+    type: "url",
+    wide: true,
+    maxLength: 300,
+    placeholder: "https://g.page/r/…/review",
+    hint: "Where “Write a review” buttons and the printed QR code send people.",
+  },
+  {
+    name: "google_profile_url",
+    label: "Google Business profile",
+    type: "url",
+    wide: true,
+    maxLength: 500,
+    placeholder: "https://www.google.com/maps/search/?api=1&query=…",
+    hint: "Opens your business on Google Maps with reviews and directions.",
+  },
+];
+
+const allFields = [...sections.map((s) => s.field), ...hoursFields, ...googleFields];
 
 const toForm = (contact: Contact): Values => ({
   ...toValues(
-    sections.map((s) => s.field),
+    [...sections.map((s) => s.field), ...googleFields],
     contact as unknown as Record<string, unknown>,
   ),
   ...contact.hours,
@@ -132,8 +155,8 @@ const toForm = (contact: Contact): Values => ({
 
 function toBody(values: Values) {
   const body = toPayload(allFields, values);
-  const { days, open, close, ...lists } = body;
-  return { ...lists, hours: { days, open, close } };
+  const { days, open, close, ...rest } = body;
+  return { ...rest, hours: { days, open, close } };
 }
 
 /** Client-side checks the API also enforces, so mistakes show before saving. */
@@ -144,6 +167,8 @@ function problems(values: Values): string | null {
   const platforms = socials.map((s) => s.platform).filter(Boolean);
   if (new Set(platforms).size !== platforms.length) return "Each social platform can only be added once.";
   if (String(values.open) >= String(values.close)) return "Closing time must be after opening time.";
+  const halfPlaced = ((values.addresses as Values[]) ?? []).findIndex((a) => (String(a.lat ?? "").trim() === "") !== (String(a.lng ?? "").trim() === ""));
+  if (halfPlaced >= 0) return `Address ${halfPlaced + 1}: enter both latitude and longitude, or leave both empty.`;
   return null;
 }
 
@@ -205,7 +230,7 @@ export default function ContactSettings() {
     <form onSubmit={save}>
       <PageHeader
         title="Contact details"
-        description="Emails, phone numbers, addresses, social media and opening hours shown on the website. Changes go live within seconds of saving."
+        description="Emails, phone numbers, addresses, social media, opening hours and Google links shown on the website. Changes go live within seconds of saving."
         actions={
           <>
             {siteContact && (
@@ -261,6 +286,17 @@ export default function ContactSettings() {
                 <CardHeader title="Opening hours" description="Shown on the contact page and the live “open now” clock (India time)." actions={<SectionIcon><Clock /></SectionIcon>} />
                 <div className="p-5">
                   <FormFields fields={hoursFields} values={values} onChange={setValues} />
+                </div>
+              </Card>
+
+              <Card>
+                <CardHeader
+                  title="Google reviews & profile"
+                  description="Links for review buttons, the review QR code and your Google Business listing."
+                  actions={<SectionIcon><Star /></SectionIcon>}
+                />
+                <div className="p-5">
+                  <FormFields fields={googleFields} values={values} onChange={setValues} />
                 </div>
               </Card>
             </div>
