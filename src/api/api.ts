@@ -61,6 +61,11 @@ export async function api<T = unknown>(
   }
 
   const json = (await res.json().catch(() => null)) as { success?: boolean; message?: unknown; data?: T } | null;
+  // An HTML page (hosting fallback) or empty body means the request never reached mec-api.
+  // Treating that as success would "sign in" without a session, then bounce back to the login page.
+  if (res.ok && (json === null || typeof json !== "object")) {
+    throw new ApiError("The API didn't respond correctly. Check that /mec-api reaches the backend (VITE_API_BASE_URL or the host's proxy).", 502);
+  }
   if (!res.ok || json?.success === false) {
     const raw = json?.message;
     // Validation errors arrive as an array of messages

@@ -61,13 +61,28 @@ Run `npm run build` (or `bun run build`) and serve `dist/`. Configure the host t
 
 Tabs left open across a deploy reload themselves once to pick up the new version.
 
+### Vercel
+
+`vercel.json` already handles everything the admin needs on Vercel:
+
+- `/mec-api/*` is proxied to `https://mecaserver.vercel.app/mec-api/*`. The login cookie is
+  `SameSite=strict`, so it only works when the API is reached through the admin's own domain.
+  Pointing `VITE_API_BASE_URL` straight at the API domain signs in, then bounces back to the login page.
+- Every other path falls back to `index.html`, so refreshing `/mec-admin/...` works.
+- Hashed assets are cached for a year, `index.html` is always revalidated, and security and `noindex` headers are set.
+
+In the Vercel project settings, remove any `VITE_API_BASE_URL` environment variable (it overrides
+`.env.production`). On the backend, leave `COOKIE_DOMAIN` empty and keep `ADMIN_URL=https://admin.mecatronix.one`.
+If the API moves, update the destination in `vercel.json`.
+
 ## Logo, icons and SEO
 
 `src/assets/logos/mecatronix-logo.png` is the master logo. After replacing it, run `bun run icons`
 (or `npm run icons`) to regenerate:
 
 - `public/favicon.ico` (16/32/48 px), `public/icons/*` (manifest, maskable and Apple touch icons)
-- `public/og-image.png` (1200×630 link-preview card)
+- `public/icons/icon-512.png` doubles as the link-preview image (Open Graph / Twitter). After
+  replacing the logo, bump `?v=2` in `index.html` and `site.webmanifest` so caches pick it up.
 - `src/assets/logos/mecatronix-logo.webp` (the lightweight copy the UI shows)
 
 This is a private console, so it is deliberately kept **out of search engines**: `robots.txt`
