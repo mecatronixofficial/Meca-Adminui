@@ -184,8 +184,23 @@ export interface ContactSettings {
   emails: { label: string; email: string }[];
   phones: { label: string; number: string; whatsapp: boolean }[];
   socials: { platform: SocialPlatform; url: string }[];
-  addresses: { label: string; street: string; city: string; state: string; pincode: string; country: string; map_url: string }[];
+  addresses: {
+    label: string;
+    street: string;
+    city: string;
+    state: string;
+    pincode: string;
+    country: string;
+    map_url: string;
+    /** Map position in decimal degrees; both or neither. */
+    lat?: number | null;
+    lng?: number | null;
+  }[];
   hours: { days: "Mon-Fri" | "Mon-Sat" | "Mon-Sun"; open: string; close: string };
+  /** Google "write a review" link (the printed QR code). The API fills in the default. */
+  review_url?: string;
+  /** Google Business profile link. The API fills in the default. */
+  google_profile_url?: string;
   /** null until an admin first saves (the API then returns the website's original details). */
   updatedAt: string | null;
 }

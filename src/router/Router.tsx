@@ -20,6 +20,7 @@ const Work = lazy(() => import("../pages/work/Work"));
 const Projects = lazy(() => import("../pages/projects/Projects"));
 const ProjectMedia = lazy(() => import("../pages/project-media/ProjectMedia"));
 const MecaBoard = lazy(() => import("../pages/meca-board/MecaBoard"));
+const TechStack = lazy(() => import("../pages/tech/TechStack"));
 const Clients = lazy(() => import("../pages/clients/Clients"));
 const ContactSettings = lazy(() => import("../pages/contact/ContactSettings"));
 const Invoice = lazy(() => import("../pages/invoice/Invoice"));
@@ -55,6 +56,7 @@ const adminPages: RouteObject[] = [
   { path: "project", element: <Projects /> },
   { path: "project-media", element: <ProjectMedia /> },
   { path: "meca-board", element: <MecaBoard /> },
+  { path: "tech", element: <TechStack /> },
   { path: "clients", element: <Clients /> },
   { path: "contact", element: <ContactSettings /> },
   { path: "invoice", element: <Invoice /> },
